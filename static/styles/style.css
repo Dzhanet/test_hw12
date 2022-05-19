@@ -48,7 +48,7 @@ a {
 /* Селекторы по классам */
 
 .button {
-    background-color: #ddd;
+    background-color: #dd2;
     padding: 8px 16px;
     text-decoration: none;
     color: black;
@@ -56,5 +56,3 @@ a {
     border-radius: 4px;
     font-size: 18px;
 }
-
-

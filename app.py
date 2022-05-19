@@ -1,7 +1,10 @@
 from flask import Flask, request, render_template, send_from_directory
+from config import POST_PATH
+from data_classes import DataPost
 
-POST_PATH = "posts.json"
 UPLOAD_FOLDER = "uploads/images"
+
+data_post = DataPost(POST_PATH)
 
 app = Flask(__name__)
 
@@ -11,14 +14,18 @@ def page_index():
     return render_template("index.html")
 
 
-@app.route("/list")
-def page_tag():
-    pass
+@app.route("/list/")
+@app.route("/list/<word>")
+def page_tag(s=None):
+    if s is None:
+        s = request.args.get('s')
+    posts = data_post.get_by_word(s)
+    return render_template("post_list.html", posts=posts, s=s)
 
 
 @app.route("/post", methods=["GET", "POST"])
 def page_post_form():
-    pass
+    return render_template("post_form.html")
 
 
 @app.route("/post", methods=["POST"])

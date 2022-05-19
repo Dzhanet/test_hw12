@@ -1,6 +1,6 @@
 class Post:
 
-    def __int__(self, pic, content):
+    def __init__(self, pic, content):
         self.pic = pic
         self.content = content
 
