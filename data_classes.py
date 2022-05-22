@@ -1,11 +1,9 @@
 import json
-
-from pprint import pprint as pp
-from config import POST_PATH
 from post_classes import Post
 
 
 class DataPost:
+    """ Класс обработки постов"""
 
     def __init__(self, POST_PATH):
         self.POST_PATH = POST_PATH
@@ -31,6 +29,8 @@ class DataPost:
                 search_word.append(words)
         return search_word
 
-
-# data = DataPost(POST_PATH)
-# pp(data.get_by_word("#"))
+    def add_post(self, contents):
+        """ Добавляет/записывает пост в файл JSON"""
+        with open(self.POST_PATH, "a+", encoding="utf-8") as posts:
+            contents = json.dump(contents, posts)
+            return contents

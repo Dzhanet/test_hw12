@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template
 
-main = Blueprint('main', __name__)
+main = Blueprint('main', __name__, template_folder="templates")
 
 
 @main.route("/")
 def page_index():
-    return render_template("index.html")
+    """возвращает форму поиска по постам"""
+    return render_template("/main/index.html")

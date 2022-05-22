@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template
 
-loader = Blueprint('loader', __name__)
+
+loader = Blueprint('loader', __name__, template_folder="templates")
 
 
-@loader.route("/post/", methods=["GET", "POST"])
+@loader.route("/", methods=["GET", "POST"])
 def page_post_form():
-    return render_template("post_form.html")
-
+    """Возвращает форму добавления поста"""
+    return render_template("/loader/post_form.html")
