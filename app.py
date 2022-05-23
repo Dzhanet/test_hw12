@@ -6,7 +6,7 @@ from main.main import main
 from loader.loader import loader
 
 # Конфигурация
-UPLOAD_FOLDER = "uploads/images"
+UPLOAD_FOLDER = "./uploads/images/"
 data_post = DataPost(POST_PATH)
 
 app = Flask(__name__)
@@ -15,28 +15,31 @@ app.register_blueprint(loader, url_prefix="/post/")
 
 
 @app.route("/list/")
-@app.route("/list/<word>")
-def page_tag(word=None):
+def page_tag():
     """ Поиск по совпадениям в словах"""
-    if word is None:
-        word = request.args.get('word')
+    word = request.args.get('word')
     posts = data_post.get_by_word(word)
-    return render_template("post_list.html", posts=posts, word=word)
+    if word:
+        return render_template("post_list.html", posts=posts, word=word)
+    return render_template("post_list.html")
 
 
 @app.route("/post/new", methods=["GET", "POST"])
 def page_post_upload():
     picture_file = request.files.get("picture")
     filename = picture_file.filename
-    picture_file.save(f"./uploads/{filename}")
-    contents = request.args.get('content')
-    words = data_post.add_post(contents)
-    return render_template("post_uploaded.html", filename=filename, words=words)
+    picture_file.save(f"{UPLOAD_FOLDER}{filename}")
+    # contents = request.values.get('content')
+    # words = data_post.write_to_json(picture_file, contents)
+    return render_template("post_uploaded.html",
+                           UPLOAD_FOLDER=UPLOAD_FOLDER,
+                           # words=words,
+                           picture_file=picture_file)
 
 
 @app.route("/uploads/<path:path>", methods=["GET", "POST"])
 def static_dir(path):
-    return send_from_directory("uploads", path)
+    return send_from_directory(UPLOAD_FOLDER, path)
 
 
 @app.errorhandler(404)

@@ -1,4 +1,6 @@
 import json
+
+from config import POST_PATH
 from post_classes import Post
 
 
@@ -29,8 +31,16 @@ class DataPost:
                 search_word.append(words)
         return search_word
 
-    def add_post(self, contents):
+    def write_to_json(self, picture, contents):
         """ Добавляет/записывает пост в файл JSON"""
-        with open(self.POST_PATH, "a+", encoding="utf-8") as posts:
-            contents = json.dump(contents, posts)
-            return contents
+        with open(self.POST_PATH, "r", encoding="utf-8") as posts, open(self.POST_PATH, 'a+', encoding="utf-8") as post:
+            all_posts = json.load(posts)
+            add_post = all_posts[0]
+            new_post = {"pic": picture,
+                        "content": contents}
+            add_post.update(new_post)
+            json.dump(all_posts, post, ensure_ascii=False)
+            return new_post
+#
+# dp= DataPost(POST_PATH)
+# print(dp.write_to_json("qweer", "рпрп"))
