@@ -33,14 +33,16 @@ class DataPost:
 
     def write_to_json(self, picture, contents):
         """ Добавляет/записывает пост в файл JSON"""
-        with open(self.POST_PATH, "r", encoding="utf-8") as posts, open(self.POST_PATH, 'a+', encoding="utf-8") as post:
+        with open(self.POST_PATH, "r", encoding="utf-8") as posts:
             all_posts = json.load(posts)
+        with open(self.POST_PATH, 'w+', encoding="utf-8") as post:
             add_post = all_posts[0]
             new_post = {"pic": picture,
-                        "content": contents}
+                        "content": contents
+                        }
             add_post.update(new_post)
-            json.dump(all_posts, post, ensure_ascii=False)
+            json.dump(all_posts, post, ensure_ascii=False, indent=2)
             return new_post
-#
+
 # dp= DataPost(POST_PATH)
-# print(dp.write_to_json("qweer", "рпрп"))
+# print(dp.write_to_json('1', '2'))

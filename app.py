@@ -28,13 +28,12 @@ def page_tag():
 def page_post_upload():
     picture_file = request.files.get("picture")
     filename = picture_file.filename
-    picture_file.save(f"{UPLOAD_FOLDER}{filename}")
-    # contents = request.values.get('content')
-    # words = data_post.write_to_json(picture_file, contents)
+    picture_file.save(f"{UPLOAD_FOLDER}/{filename}")
+    contents = request.values.get('content')
+    content = data_post.write_to_json(UPLOAD_FOLDER + filename, contents)
     return render_template("post_uploaded.html",
-                           UPLOAD_FOLDER=UPLOAD_FOLDER,
-                           # words=words,
-                           picture_file=picture_file)
+                           filename=filename,
+                           content=contents)
 
 
 @app.route("/uploads/<path:path>", methods=["GET", "POST"])
