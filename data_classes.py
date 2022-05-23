@@ -1,6 +1,5 @@
 import json
 
-from config import POST_PATH
 from post_classes import Post
 
 
@@ -10,9 +9,14 @@ class DataPost:
     def __init__(self, POST_PATH):
         self.POST_PATH = POST_PATH
 
+    @classmethod
+    def loading_error_json(cls, POST_PATH):
+        if not POST_PATH:
+            return "Файл .json отсутствует или не хочет превращаться в список"
+
     def load_post(self):
         '''возвращает список всех постов'''
-        with open(self.POST_PATH, "r", encoding="utf-8") as file:
+        with open(self.POST_PATH, encoding="utf-8") as file:
             file = json.load(file)
             list_post = []
             for post in file:
@@ -31,18 +35,29 @@ class DataPost:
                 search_word.append(words)
         return search_word
 
+    @classmethod
+    def loading_error_pic(cls, pic):
+        if not pic:
+            return FileNotFoundError
+
+    def loading_error_content(cls, content):
+        if not content:
+            return ValueError
+
+    def invalid_file_type(cls, pic, ALLOWED_EXTENSIONS):
+        extension = pic.read(".")[-1]
+        if extension in ALLOWED_EXTENSIONS:
+            return True
+        return False
+
     def write_to_json(self, picture, contents):
         """ Добавляет/записывает пост в файл JSON"""
-        with open(self.POST_PATH, "r", encoding="utf-8") as posts:
-            all_posts = json.load(posts)
-        with open(self.POST_PATH, 'w+', encoding="utf-8") as post:
-            add_post = all_posts[0]
-            new_post = {"pic": picture,
-                        "content": contents
-                        }
-            add_post.update(new_post)
-            json.dump(all_posts, post, ensure_ascii=False, indent=2)
-            return new_post
-
-# dp= DataPost(POST_PATH)
-# print(dp.write_to_json('1', '2'))
+        with open(self.POST_PATH, "r", encoding="utf-8") as file:
+            all_posts = json.load(file)
+        new_post = {"pic": picture,
+                    "content": contents
+                    }
+        all_posts.append(new_post)
+        with open(self.POST_PATH, 'w+', encoding="utf-8") as file:
+            json.dump(all_posts, file, ensure_ascii=False, indent=2)
+        return new_post

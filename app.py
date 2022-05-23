@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 from flask import Flask, request, render_template, send_from_directory
 from config import POST_PATH
 from data_classes import DataPost
@@ -7,6 +9,8 @@ from loader.loader import loader
 
 # Конфигурация
 UPLOAD_FOLDER = "./uploads/images/"
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
 data_post = DataPost(POST_PATH)
 
 app = Flask(__name__)
@@ -19,21 +23,31 @@ def page_tag():
     """ Поиск по совпадениям в словах"""
     word = request.args.get('word')
     posts = data_post.get_by_word(word)
-    if word:
-        return render_template("post_list.html", posts=posts, word=word)
-    return render_template("post_list.html")
+    if not word:
+        return "Строка поиска пустая"
+    elif data_post.loading_error_json(POST_PATH):
+        return JSONDecodeError, 500
+    elif not posts:
+        return "Нет таких постов"
+    return render_template("post_list.html", posts=posts, word=word)
 
 
 @app.route("/post/new", methods=["GET", "POST"])
 def page_post_upload():
     picture_file = request.files.get("picture")
+    if data_post.loading_error_pic(picture_file):
+        return "Ошибка загрузки из-за отсутствия ФАЙЛА ", 501
+    elif data_post.invalid_file_type(picture_file, ALLOWED_EXTENSIONS):
+        return "Загруженный файл - не картинка (расширение не jpeg и не png)"
     filename = picture_file.filename
     picture_file.save(f"{UPLOAD_FOLDER}/{filename}")
     contents = request.values.get('content')
-    content = data_post.write_to_json(UPLOAD_FOLDER + filename, contents)
+    if data_post.loading_error_content(contents):
+        return "Ошибка загрузки из-за отсутствия ТЕКСТА ", 502
+    content = data_post.write_to_json(f'/uploads/{filename}', contents)
     return render_template("post_uploaded.html",
                            filename=filename,
-                           content=contents)
+                           contents=contents)
 
 
 @app.route("/uploads/<path:path>", methods=["GET", "POST"])
