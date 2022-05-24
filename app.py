@@ -10,8 +10,12 @@ from loader.loader import loader
 # Конфигурация
 UPLOAD_FOLDER = "./uploads/images/"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-# Добавляем файл в который пишем логи
-logging.basicConfig(filename="basic.log", level=logging.ERROR)
+
+# ЛОГИРОВАНИЕ
+logging.basicConfig(level=logging.ERROR,
+                    filename='app.log',
+                    filemode='w',
+                    format='%(name)s - %(levelname)s - %(message)s')
 
 data_post = DataPost(POST_PATH)
 
@@ -26,11 +30,11 @@ def page_tag():
     word = request.args.get('word')
     posts = data_post.get_by_word(word)
     if not word:
-        return "Строка поиска пустая"
+        return "Строка поиска пустая", 506
     elif data_post.loading_error_json(POST_PATH):
         return JSONDecodeError, 500
     elif not posts:
-        return "Нет таких постов"
+        return "Нет таких постов", 505
     return render_template("post_list.html", posts=posts, word=word)
 
 
