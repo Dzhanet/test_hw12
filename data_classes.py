@@ -27,7 +27,7 @@ class DataPost:
             return list_post
 
     def get_by_word(self, content):
-        """ Вовзращает посты по вхождению в строку"""
+        """ Возвращает посты по вхождению в строку"""
         get_words = self.load_post()
         search_word = []
         for words in get_words:
@@ -38,17 +38,17 @@ class DataPost:
     @classmethod
     def loading_error_pic(cls, pic):
         if not pic:
-            return FileNotFoundError
+            raise FileNotFoundError("Ошибка загрузки из-за отсутствия ФАЙЛА ")
 
     def loading_error_content(cls, content):
         if not content:
-            return ValueError
+            raise TypeError("Ошибка загрузки из-за отсутствия ТЕКСТА ")
 
-    def invalid_file_type(cls, pic, ALLOWED_EXTENSIONS):
-        extension = pic.read(".")[-1]
-        if extension in ALLOWED_EXTENSIONS:
-            return True
-        return False
+    def invalid_file_type(cls, filename, ALLOWED_EXTENSIONS):
+        extension = filename.split(".")[-1]
+        if extension not in ALLOWED_EXTENSIONS:
+            raise TypeError(
+                f"Загруженный файл - {extension} (Доступные расширение 'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif')")
 
     def write_to_json(self, picture, contents):
         """ Добавляет/записывает пост в файл JSON"""

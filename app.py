@@ -1,5 +1,5 @@
 from json import JSONDecodeError
-
+import logging
 from flask import Flask, request, render_template, send_from_directory
 from config import POST_PATH
 from data_classes import DataPost
@@ -10,6 +10,8 @@ from loader.loader import loader
 # Конфигурация
 UPLOAD_FOLDER = "./uploads/images/"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+# Добавляем файл в который пишем логи
+logging.basicConfig(filename="basic.log", level=logging.ERROR)
 
 data_post = DataPost(POST_PATH)
 
@@ -36,14 +38,14 @@ def page_tag():
 def page_post_upload():
     picture_file = request.files.get("picture")
     if data_post.loading_error_pic(picture_file):
-        return "Ошибка загрузки из-за отсутствия ФАЙЛА ", 501
-    elif data_post.invalid_file_type(picture_file, ALLOWED_EXTENSIONS):
-        return "Загруженный файл - не картинка (расширение не jpeg и не png)"
+        return FileNotFoundError, 501
     filename = picture_file.filename
+    if data_post.invalid_file_type(filename, ALLOWED_EXTENSIONS):
+        return TypeError, 503
     picture_file.save(f"{UPLOAD_FOLDER}/{filename}")
     contents = request.values.get('content')
     if data_post.loading_error_content(contents):
-        return "Ошибка загрузки из-за отсутствия ТЕКСТА ", 502
+        return ValueError, 502
     content = data_post.write_to_json(f'/uploads/{filename}', contents)
     return render_template("post_uploaded.html",
                            filename=filename,
