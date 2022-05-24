@@ -12,10 +12,15 @@ UPLOAD_FOLDER = "./uploads/images/"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 # ЛОГИРОВАНИЕ
-logging.basicConfig(level=logging.ERROR,
-                    filename='app.log',
-                    filemode='w',
-                    format='%(name)s - %(levelname)s - %(message)s')
+new_logger = logging.getLogger()
+
+console_handler = logging.StreamHandler()
+file_handler = logging.FileHandler("log.txt")
+
+new_logger.addHandler(console_handler)
+new_logger.addHandler(file_handler)
+
+
 
 data_post = DataPost(POST_PATH)
 
