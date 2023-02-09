@@ -7,5 +7,4 @@ main = Blueprint('main', __name__, template_folder="templates")
 def page_index():
     """возвращает форму поиска по постам"""
 
-    print('Hello')
     return render_template("/main/index.html")
